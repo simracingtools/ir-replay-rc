@@ -1,3 +1,8 @@
+
+import sys
+import json
+import time
+from os import system
 from threading import Thread
 import stomper
 from websocket import create_connection
@@ -16,17 +21,20 @@ class RcServerConnector:
     def connect(self, clientId):
         try:
             self.ws = create_connection(self.rcServerUri)
-            self.receiver = ReceiveThread()
+            self.receiver = ReceiveThread(self)
             self.receiver.start()
-
+            
             self.ws.send("CONNECT\naccept-version:1.0,1.1,2.0\n\n\x00\n")
             sub = stomper.subscribe("/user/rc/client-ack", clientId, ack='auto')
             self.ws.send(sub)
             sub = stomper.subscribe("/rc/" + str(clientId) + "/replayposition" , clientId, ack='auto')
             self.ws.send(sub)
 
-            send_message = stomper.send("/app/rcclient", "Hello from " + str(clientId))
+            send_message = stomper.send("/app/rcclient", str(clientId))
             self.ws.send(send_message)
+
+            self.heartbeat = HeartbeatThread(self, clientId)
+            self.heartbeat.start()
         except Exception as e:
             print(str(e))
 
@@ -37,7 +45,7 @@ class RcServerConnector:
 
 class ReceiveThread(Thread):
     def __init__(self, connector):
-        """Init Worker Thread Class."""
+        """Init receiver Thread Class."""
         Thread.__init__(self)
         self.sentinel = True
         self.connector = connector
@@ -46,20 +54,51 @@ class ReceiveThread(Thread):
         print("Receive thread started")
         while self.sentinel:
             try:
-                d = self.ws.recv()
+                d = self.connector.ws.recv()
                 if d:
                     m = MSG(d)
                     if m.type == 'CONNECTED':
-                        self.frame.SetStatusText("RC server connected", 2)
+                        self.connector.frame.SetStatusText("RC server connected", 2)
                         self.connector.connected = True
                     else:
                         print("stomp message: " + str(m.message))
+                        try:
+                            message = json.loads(str(m.message))
+                            if message['messageType'] == 'replayTime':
+                                self.connector.irrc.setTimePosition(message['timestamp'], message['driverId'])
+                                self.connector.frame.setSessionTime(message['timestamp'] / 1000)
+                        except json.decoder.JSONDecodeError as jserr:
+                            print(str(jserr))
+
             except WebSocketConnectionClosedException:
-                self.frame.SetStatusText("RC server disconnected", 2)
-                self.connector.connected = False
-                self.sentinel = False
+                try:
+                    self.connector.frame.SetStatusText("RC server disconnected", 2)
+                    self.connector.connected = False
+                    self.sentinel = False
+                except RuntimeError as e:
+                    print(str(e))
+                    sys.exit(0)
+
 
         print("Receive thread terminated")
+
+class HeartbeatThread(Thread):
+    def __init__(self, connector, clientId):
+        """Init heartbeat Thread Class."""
+        Thread.__init__(self)
+        self.sentinel = True
+        self.connector = connector
+        self.clientId = clientId
+
+    def run(self):
+        print("Receive thread started")
+        while self.sentinel:
+            try:
+                time.sleep(10)
+                send_message = stomper.send("/app/rcclient", str(self.clientId))
+                self.connector.ws.send(send_message)
+            except WebSocketConnectionClosedException:
+                self.sentinel = False
 
 class MSG(object):
     def __init__(self, msg):

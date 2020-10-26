@@ -31,9 +31,20 @@ class IrRemoteControl:
             else:
                 print('Cam group not found')
 
-    def setTimePosition(self, sessionTime):
+    def setTimePosition(self, sessionTime, teamId=-1):
         if self.ir.is_initialized and self.ir.is_connected:
-            self.ir.replay_search_session_time(self.ir['SessionNum'], sessionTime * 1000)
+            camCarNo = -1
+            print("set time on driver " + str(teamId) + " to " + str(sessionTime))
+            if teamId > 0:
+                for driver in self.ir['DriverInfo']['Drivers']:
+                    if driver['TeamID'] == teamId:
+                        camCarNo = driver['CarNumberRaw']
+                        print("found driver " + str(driver['UserID']) + ", carNo: " + str(camCarNo))
+                        break
+
+            self.ir.replay_search_session_time(self.ir['SessionNum'], sessionTime)
+            if camCarNo > -1:
+                self.ir.cam_switch_num(camCarNo, self.ir['CamGroupNumber'], 1)
 
     def updateCamDict(self):
         if self.ir.is_initialized and self.ir.is_connected:

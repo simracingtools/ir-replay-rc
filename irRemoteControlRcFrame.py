@@ -14,8 +14,13 @@ class irRemoteControlRcFrame( RcCode.RcFrame ):
 		self.irrc = irRemote
 
 	def setSessionTime(self, sessionTimeSeconds):
-		sessionTime = wx.DateTime.FromTimeT(sessionTimeSeconds)
-		self.session_time_pick.SetValue(sessionTime.Subtract(wx.TimeSpan(1)))
+		print("set session time: " + str(sessionTimeSeconds))
+
+		hours = int(sessionTimeSeconds / 3600)
+		minutes = int((sessionTimeSeconds - (hours * 3600)) / 60)
+		seconds = int(sessionTimeSeconds - (hours * 3600) - (minutes * 60))
+
+		self.session_time_pick.SetTime(hours, minutes, seconds)
 	
 
 	# Handlers for RcFrame events.
@@ -82,7 +87,7 @@ class irRemoteControlRcFrame( RcCode.RcFrame ):
 		irSessionTime = event.GetDate().GetHour() * 3600
 		irSessionTime += event.GetDate().GetMinute() * 60
 		irSessionTime += event.GetDate().GetSecond()
-		self.irrc.setTimePosition(irSessionTime)
+		self.irrc.setTimePosition(irSessionTime * 1000)
 		event.Skip()
 
 	def closeWindow( self, event ):

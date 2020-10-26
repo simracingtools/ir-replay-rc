@@ -1,5 +1,4 @@
 import wx
-import json
 import time
 import irRemoteControlRcFrame
 import irsdk
