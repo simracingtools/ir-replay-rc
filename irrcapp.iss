@@ -53,7 +53,7 @@ UserInfoOrg=&Client access token:
 ;Filename: "{app}\irrc.ini"; Section: "global"; Key: "iracingId"; String: "{userinfoname}"
 ;Filename: "{app}\irrc.ini"; Section: "connect"; Key: "clientAccessToken"; String: "{userinfoorg}"
 Filename: "{app}\irrc.ini"; Section: "connect"; Key: "postUrl"; String: "http://race-control.bausdorf-engineering.de/clientmessage"
-Filename: "{app}\irrc.ini"; Section: "connect"; Key: "wsUrl"; String: "http://race-control.bausdorf-engineering.de/rcclient"
+Filename: "{app}\irrc.ini"; Section: "connect"; Key: "wsUrl"; String: "ws://race-control.bausdorf-engineering.de/rcclient"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -72,4 +72,4 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\tesseract-irrc.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\irrc.exe"; Description: "Launch application"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "Launch application"; Flags: postinstall nowait skipifsilent
