@@ -1,3 +1,9 @@
 vars.txt
 irRcApp.spec
 /__pycache__
+/build
+/dist/irRcApp
+irrc.ini
+dist/irRcApp.exe
+dist/irrcSetup.exe
+.vscode/settings.json

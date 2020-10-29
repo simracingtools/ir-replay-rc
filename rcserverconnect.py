@@ -1,3 +1,20 @@
+# Copyright (C) 2020 rbaus
+# 
+# This file is part of ir-replay-rc.
+# 
+# ir-replay-rc is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# ir-replay-rc is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with ir-replay-rc.  If not, see <http://www.gnu.org/licenses/>.
+
 
 import sys
 import json
@@ -13,9 +30,10 @@ class RcServerConnector:
     frame = None
     irrc = None
 
-    def __init__(self, statusFrame, irrc):
+    def __init__(self, statusFrame, irrc, config):
         self.frame = statusFrame
         self.irrc = irrc
+        self.rcServerUri = config.getWsUrl()
         self.connected = False
 
     def connect(self, clientId):
@@ -36,7 +54,8 @@ class RcServerConnector:
             self.heartbeat = HeartbeatThread(self, clientId)
             self.heartbeat.start()
         except Exception as e:
-            print(str(e))
+            self.frame.SetStatusText(self.rcServerUri + ': ' + str(e), 2)
+            #print(str(e))
 
     def disconnect(self):
         if self.connected:
@@ -58,7 +77,7 @@ class ReceiveThread(Thread):
                 if d:
                     m = MSG(d)
                     if m.type == 'CONNECTED':
-                        self.connector.frame.SetStatusText("RC server connected", 2)
+                        self.connector.frame.SetStatusText(self.connector.rcServerUri + " connected", 2)
                         self.connector.connected = True
                     else:
                         print("stomp message: " + str(m.message))
@@ -72,7 +91,7 @@ class ReceiveThread(Thread):
 
             except WebSocketConnectionClosedException:
                 try:
-                    self.connector.frame.SetStatusText("RC server disconnected", 2)
+                    self.connector.frame.SetStatusText(self.connector.rcServerUri + " disconnected", 2)
                     self.connector.connected = False
                     self.sentinel = False
                 except RuntimeError as e:

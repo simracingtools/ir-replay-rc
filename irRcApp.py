@@ -1,3 +1,33 @@
+# Copyright (C) 2020 rbaus
+# 
+# This file is part of ir-replay-rc.
+# 
+# ir-replay-rc is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# ir-replay-rc is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with ir-replay-rc.  If not, see <http://www.gnu.org/licenses/>.
+
+__author__ = "Robert Bausdorf"
+__contact__ = "rbausdorf@gmail.com"
+__copyright__ = "2020, bausdorf engineering"
+#__credits__ = ["One developer", "And another one", "etc"]
+__date__ = "2019/06/01"
+__deprecated__ = False
+__email__ =  "rbausdorf@gmail.com"
+__license__ = "GPLv3"
+#__maintainer__ = "developer"
+__status__ = "Beta"
+__version__ = "0.9"
+
+from irrcconfig import IrrcConfig
 import wx
 import time
 import irRemoteControlRcFrame
@@ -5,6 +35,7 @@ import irsdk
 from threading import Thread
 from IrRemoteControl import IrRemoteControl
 from rcserverconnect import RcServerConnector
+from irrcconfig import IrrcConfig
 
 class State:
     ir_connected = False
@@ -64,7 +95,7 @@ class ConnectionCheck(Thread):
 
                 # we are shut down ir library (clear all internal variables)
                 ir.shutdown()
-                self.panel.SetStatusText('Not Connected', 0)
+                self.panel.SetStatusText('Sim disconnected', 0)
                 rcServer.disconnect()
 
             elif not state.ir_connected:
@@ -80,7 +111,7 @@ class ConnectionCheck(Thread):
                     state.checkSessionChange(ir)
                     self.panel.SetStatusText(state.getSessionName(), 1)
 
-                    self.panel.SetStatusText('Connected', 0)
+                    self.panel.SetStatusText('Sim connected', 0)
                     self.panel.playSpeed = ir['ReplayPlaySpeed']
                     self.panel.setSessionTime(ir['SessionTime'])
                     irRC.updateCamDict()
@@ -111,8 +142,8 @@ if __name__ == '__main__':
     app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
     irRC = IrRemoteControl(ir)
     frame = irRemoteControlRcFrame.irRemoteControlRcFrame(None, irRC) # A Frame is a top-level window.
-
-    rcServer = RcServerConnector(frame, irRC)
+    config = IrrcConfig()
+    rcServer = RcServerConnector(frame, irRC, config)
     
     frame.SetStatusText("Not connected", 0)
     frame.checker = ConnectionCheck(frame)
