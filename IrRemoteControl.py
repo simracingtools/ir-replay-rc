@@ -59,9 +59,13 @@ class IrRemoteControl:
                         print("found driver " + str(driver['UserID']) + ", carNo: " + str(camCarNo))
                         break
 
+            camGroupNumber = self.ir['CamGroupNumber']
+            if not camGroupNumber in [9, 20, 21, 22]:
+                camGroupNumber = 20 # Chase
+
             self.ir.replay_search_session_time(self.ir['SessionNum'], sessionTime)
             if camCarNo > -1:
-                self.ir.cam_switch_num(camCarNo, self.ir['CamGroupNumber'], 1)
+                self.ir.cam_switch_num(camCarNo, camGroupNumber, 1)
 
     def updateCamDict(self):
         if self.ir.is_initialized and self.ir.is_connected:
