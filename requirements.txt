@@ -1,4 +1,4 @@
-irsdk
+pyirsdk
 stomper
 websocket
 wxPython
