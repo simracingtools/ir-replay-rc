@@ -1,4 +1,4 @@
-vars.txt
+*.txt
 irRcApp.spec
 /__pycache__
 /build
