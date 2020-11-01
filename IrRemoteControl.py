@@ -37,6 +37,8 @@ class IrRemoteControl:
     def toLivePosition(self):
         if self.ir.is_initialized and self.ir.is_connected:
             self.ir.replay_set_play_position(RpyPosMode.end, 0)
+            self.ir.replay_set_play_speed(1, False)
+
 
     def camSwitch(self, camName):
         if self.ir.is_initialized and self.ir.is_connected:
@@ -60,8 +62,8 @@ class IrRemoteControl:
                         break
 
             camGroupNumber = self.ir['CamGroupNumber']
-            if not camGroupNumber in [9, 20, 21, 22]:
-                camGroupNumber = 20 # Chase
+            if not self.ir['CameraInfo']['Groups'][camGroupNumber]['GroupName'] in ['Chase', 'Far Chase', 'Rear Chase', 'Cockpit']:
+                camGroupNumber = self.cams['Chase']['GroupNum']
 
             self.ir.replay_search_session_time(self.ir['SessionNum'], sessionTime)
             if camCarNo > -1:
