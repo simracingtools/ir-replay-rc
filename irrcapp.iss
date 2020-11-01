@@ -5,7 +5,7 @@
 #define ProjectBaseDir "."
 
 #define MyAppName "irRC"
-#define MyAppVersion "0.9"
+#define MyAppVersion "1.0"
 #define MyAppPublisher "Bausdorf engineering"
 #define MyAppURL "https://github.com/robbyb67/simracing/tree/master/ir-replay-rc"
 #define MyAppExeName "irRcApp.exe"
