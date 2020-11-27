@@ -23,7 +23,7 @@ jobs:
         pip install -r requirements.txt
     - name: Build pyinstaller
       run: |
-        pyinstaller --clean -F irRcApp.py
+        pyinstaller --clean --noconsole -F irRcApp.py
     - name: Compile setup
       run: |
         iscc.exe irrcapp.iss

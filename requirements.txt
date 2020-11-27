@@ -1,5 +1,6 @@
 pyirsdk
 stomper
 websocket
+websocket-client
 wxPython
 pyinstaller
