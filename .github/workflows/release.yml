@@ -14,17 +14,19 @@ jobs:
       uses: mathieudutour/github-tag-action@v4.6
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-#    - name: Set up Python
-#      uses: actions/setup-python@v2
-#    - name: Install dependencies
-#      run: |
-#        pip install -r requirements.txt
-#    - name: Build pyinstaller
-#      run: |
-#        pyinstaller --clean --noconsole -F irRcApp.py
-#    - name: Compile setup
-#      run: |
-#        iscc.exe irrcapp.iss
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8"
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    - name: Build pyinstaller
+      run: |
+        pyinstaller --clean --noconsole -F irRcApp.py
+    - name: Compile setup
+      run: |
+        iscc.exe irrcapp.iss
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
