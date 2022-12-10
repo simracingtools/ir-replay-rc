@@ -5,7 +5,7 @@
 #define ProjectBaseDir "."
 
 #define MyAppName "irRC"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.1"
 #define MyAppPublisher "Bausdorf engineering"
 #define MyAppURL "https://github.com/robbyb67/simracing/tree/master/ir-replay-rc"
 #define MyAppExeName "irRcApp.exe"
@@ -52,8 +52,8 @@ UserInfoOrg=&Client access token:
 [INI]
 ;Filename: "{app}\irrc.ini"; Section: "global"; Key: "iracingId"; String: "{userinfoname}"
 ;Filename: "{app}\irrc.ini"; Section: "connect"; Key: "clientAccessToken"; String: "{userinfoorg}"
-Filename: "{app}\irrc.ini"; Section: "connect"; Key: "postUrl"; String: "http://race-control.bausdorf-engineering.de/clientmessage"
-Filename: "{app}\irrc.ini"; Section: "connect"; Key: "wsUrl"; String: "ws://race-control.bausdorf-engineering.de/rcclient"
+Filename: "{app}\irrc.ini"; Section: "connect"; Key: "postUrl"; String: "https://race-control.bausdorf-engineering.de/clientmessage"
+Filename: "{app}\irrc.ini"; Section: "connect"; Key: "wsUrl"; String: "wss://race-control.bausdorf-engineering.de/rcclient"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
