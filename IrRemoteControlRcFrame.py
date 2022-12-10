@@ -21,21 +21,21 @@ import RcCode
 import IrRemoteControl
 
 # Implementing RcFrame
-class irRemoteControlRcFrame( RcCode.RcFrame ):
+class IrRemoteControlRcFrame(RcCode.RcFrame):
 	playSpeed = 0
 	checker = None
 
-	def __init__( self, parent, irRemote ):
+	def __init__(self, parent, ir_remote):
 		RcCode.RcFrame.__init__( self, parent )
 		self.SetStatusWidths([100, 250, -1])
-		self.irrc = irRemote
+		self.irrc = ir_remote
 
-	def setSessionTime(self, sessionTimeSeconds):
-		print("set session time: " + str(sessionTimeSeconds))
+	def setSessionTime(self, session_time_seconds):
+		print("set session time: " + str(session_time_seconds))
 
-		hours = int(sessionTimeSeconds / 3600)
-		minutes = int((sessionTimeSeconds - (hours * 3600)) / 60)
-		seconds = int(sessionTimeSeconds - (hours * 3600) - (minutes * 60))
+		hours = int(session_time_seconds / 3600)
+		minutes = int((session_time_seconds - (hours * 3600)) / 60)
+		seconds = int(session_time_seconds - (hours * 3600) - (minutes * 60))
 
 		self.session_time_pick.SetTime(hours, minutes, seconds)
 	
@@ -43,7 +43,6 @@ class irRemoteControlRcFrame( RcCode.RcFrame ):
 	# Handlers for RcFrame events.
 	def handle_keypress( self, event ):
 		print("Key: " + str(event.GetKeyCode()))
-		pass
 
 	def frLeftDown( self, event ):
 		if self.playSpeed >= 0:
@@ -51,11 +50,11 @@ class irRemoteControlRcFrame( RcCode.RcFrame ):
 		elif self.playSpeed < 0:
 			self.playSpeed *= 2
 
-		self.irrc.updatePlaySpeed(self.playSpeed, False)
+		self.irrc.update_play_speed(self.playSpeed, False)
 		event.Skip()
 
 	def lfLeftDown( self, event ):
-		self.irrc.updateShownFrame(-2)
+		self.irrc.update_shown_frame(-2)
 		event.Skip()
 
 	def ppLeftDown( self, event ):
@@ -64,11 +63,11 @@ class irRemoteControlRcFrame( RcCode.RcFrame ):
 		else:
 			self.playSpeed = 0
 
-		self.irrc.updatePlaySpeed(self.playSpeed, False)
+		self.irrc.update_play_speed(self.playSpeed, False)
 		event.Skip()
 
 	def nfLeftDown( self, event ):
-		self.irrc.updateShownFrame(2)
+		self.irrc.update_shown_frame(2)
 		event.Skip()
 
 	def ffLeftDown( self, event ):
@@ -77,34 +76,34 @@ class irRemoteControlRcFrame( RcCode.RcFrame ):
 		elif self.playSpeed > 0:
 			self.playSpeed *= 2
 
-		self.irrc.updatePlaySpeed(self.playSpeed, False)
+		self.irrc.update_play_speed(self.playSpeed, False)
 		event.Skip()
 
 	def liveLeftDown( self, event ):
-		self.irrc.toLivePosition()
+		self.irrc.to_live_position()
 		event.Skip()
 
 	def camCase( self, event ):
-		self.irrc.camSwitch('Chase')
+		self.irrc.cam_switch('Chase')
 		event.Skip()
 
 	def camFarChase( self, event ):
-		self.irrc.camSwitch('Far Chase')
+		self.irrc.cam_switch('Far Chase')
 		event.Skip()
 
 	def camRearChase( self, event ):
-		self.irrc.camSwitch('Rear Chase')
+		self.irrc.cam_switch('Rear Chase')
 		event.Skip()
 
 	def camCockpit( self, event ):
-		self.irrc.camSwitch('Cockpit')
+		self.irrc.cam_switch('Cockpit')
 		event.Skip()
 
 	def setTimePosition( self, event ):
-		irSessionTime = event.GetDate().GetHour() * 3600
-		irSessionTime += event.GetDate().GetMinute() * 60
-		irSessionTime += event.GetDate().GetSecond()
-		self.irrc.setTimePosition(irSessionTime * 1000)
+		ir_session_time = event.GetDate().GetHour() * 3600
+		ir_session_time += event.GetDate().GetMinute() * 60
+		ir_session_time += event.GetDate().GetSecond()
+		self.irrc.set_time_position(ir_session_time * 1000)
 		event.Skip()
 
 	def closeWindow( self, event ):

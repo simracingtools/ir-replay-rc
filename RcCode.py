@@ -22,46 +22,46 @@ class RcFrame ( wx.Frame ):
 
 		self.SetSizeHints( wx.Size( 750,165 ), wx.DefaultSize )
 
-		gSizer1 = wx.GridSizer( 3, 6, 5, 5 )
+		g_sizer_1 = wx.GridSizer( 3, 6, 5, 5 )
 
 		self.fr_button = wx.Button( self, wx.ID_ANY, u"FR", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.fr_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.fr_button, 0, wx.ALL, 5 )
 
 		self.lf_button = wx.Button( self, wx.ID_ANY, u"Last frame", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.lf_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.lf_button, 0, wx.ALL, 5 )
 
 		self.play_button = wx.Button( self, wx.ID_ANY, u"Play/Pause", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.play_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.play_button, 0, wx.ALL, 5 )
 
 		self.nf_button = wx.Button( self, wx.ID_ANY, u"Next frame", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.nf_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.nf_button, 0, wx.ALL, 5 )
 
 		self.ff_button = wx.Button( self, wx.ID_ANY, u"FF", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.ff_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.ff_button, 0, wx.ALL, 5 )
 
 		self.live_button = wx.Button( self, wx.ID_ANY, u"Live", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.live_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.live_button, 0, wx.ALL, 5 )
 
 		self.ui_button = wx.Button( self, wx.ID_ANY, u"Hide/Show UI", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.ui_button, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.ui_button, 0, wx.ALL, 5 )
 
 		self.case_btn = wx.Button( self, wx.ID_ANY, u"Chase", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.case_btn, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.case_btn, 0, wx.ALL, 5 )
 
 		self.far_chase_btn = wx.Button( self, wx.ID_ANY, u"Far chase", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.far_chase_btn, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.far_chase_btn, 0, wx.ALL, 5 )
 
 		self.rear_chase_btn = wx.Button( self, wx.ID_ANY, u"Rear chase", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.rear_chase_btn, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.rear_chase_btn, 0, wx.ALL, 5 )
 
 		self.cockpit_btn = wx.Button( self, wx.ID_ANY, u"Cockpit", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.cockpit_btn, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.cockpit_btn, 0, wx.ALL, 5 )
 
 		self.session_time_pick = wx.adv.TimePickerCtrl( self, wx.ID_ANY, wx.DefaultDateTime, wx.DefaultPosition, wx.DefaultSize, wx.adv.TP_DEFAULT )
-		gSizer1.Add( self.session_time_pick, 0, wx.ALL, 5 )
+		g_sizer_1.Add( self.session_time_pick, 0, wx.ALL, 5 )
 
 
-		self.SetSizer( gSizer1 )
+		self.SetSizer( g_sizer_1 )
 		self.Layout()
 		self.staturBar = self.CreateStatusBar( 3, wx.STB_SIZEGRIP, wx.ID_ANY )
 

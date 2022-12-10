@@ -28,7 +28,7 @@ class IrrcConfig:
             print('unable to read configuration: ' + str(ex))
             sys.exit(1)
 
-    def getWsUrl(self):
+    def get_ws_url(self):
         if self.config.has_option('connect', 'wsUrl'):
             return self.config['connect']['wsUrl']
         else:

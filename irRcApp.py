@@ -18,19 +18,16 @@
 __author__ = "Robert Bausdorf"
 __contact__ = "rbausdorf@gmail.com"
 __copyright__ = "2020, bausdorf engineering"
-#__credits__ = ["One developer", "And another one", "etc"]
 __date__ = "2019/06/01"
 __deprecated__ = False
 __email__ =  "rbausdorf@gmail.com"
 __license__ = "GPLv3"
-#__maintainer__ = "developer"
 __status__ = "Beta"
-__version__ = "1.0"
+__version__ = "1.1"
 
-from irrcconfig import IrrcConfig
 import wx
 import time
-import irRemoteControlRcFrame
+import IrRemoteControlRcFrame
 import irsdk
 from threading import Thread
 from IrRemoteControl import IrRemoteControl
@@ -39,39 +36,39 @@ from irrcconfig import IrrcConfig
 
 class State:
     ir_connected = False
-    sessionId = -1
-    subSessionId = -1
-    sessionNum = -1
-    sessionState = -1
+    session_id = -1
+    subsession_id = -1
+    session_num = -1
+    session_state = -1
 
-    def checkSessionChange(self, ir):
-        sessionChange = False
+    def check_session_change(self, ir):
+        session_change = False
         
-        if self.sessionId != str(ir['WeekendInfo']['SessionID']):
-            self.sessionId = str(ir['WeekendInfo']['SessionID'])
-            sessionChange = True
+        if self.session_id != str(ir['WeekendInfo']['SessionID']):
+            self.session_id = str(ir['WeekendInfo']['SessionID'])
+            session_change = True
                     
-        if self.subSessionId != str(ir['WeekendInfo']['SubSessionID']):
-            self.subSessionId = str(ir['WeekendInfo']['SubSessionID'])
-            sessionChange = True
+        if self.subsession_id != str(ir['WeekendInfo']['SubSessionID']):
+            self.subsession_id = str(ir['WeekendInfo']['SubSessionID'])
+            session_change = True
 
-        if self.sessionNum != ir['SessionNum']:
-            self.sessionNum = ir['SessionNum']
-            sessionChange = True
+        if self.session_num != ir['SessionNum']:
+            self.session_num = ir['SessionNum']
+            session_change = True
 
-        if self.sessionState != ir['SessionState']:
-            self.sessionState = ir['SessionState']
-            sessionChange = True
+        if self.session_state != ir['SessionState']:
+            self.session_state = ir['SessionState']
+            session_change = True
 
-        if sessionChange:
-            print('SessionId change: ' + self.getSessionName())
+        if session_change:
+            print('SessionId change: ' + self.get_session_name())
 
-        return sessionChange
+        return session_change
 
-    def getSessionName(self):
+    def get_session_name(self):
 
-        trackName = ir['WeekendInfo']['TrackName']
-        return str(trackName) + '@' + str(self.sessionId) + '#' + str(self.subSessionId) + '#' + str(self.sessionNum)
+        track_name = ir['WeekendInfo']['TrackName']
+        return str(track_name) + '@' + str(self.session_id) + '#' + str(self.subsession_id) + '#' + str(self.session_num)
 
 class ConnectionCheck(Thread):
     
@@ -89,9 +86,9 @@ class ConnectionCheck(Thread):
             if state.ir_connected and not (ir.is_initialized and ir.is_connected):
                 state.ir_connected = False
                 # don't forget to reset all your in State variables
-                state.sessionId = -1
-                state.subSessionId = -1
-                state.sessionNum = -1
+                state.session_id = -1
+                state.subsession_id = -1
+                state.session_num = -1
 
                 # we are shut down ir library (clear all internal variables)
                 ir.shutdown()
@@ -108,20 +105,20 @@ class ConnectionCheck(Thread):
 
                 if is_startup and ir.is_initialized and ir.is_connected:
                     state.ir_connected = True
-                    state.checkSessionChange(ir)
-                    self.panel.SetStatusText(state.getSessionName(), 1)
+                    state.check_session_change(ir)
+                    self.panel.SetStatusText(state.get_session_name(), 1)
 
                     self.panel.SetStatusText('Sim connected', 0)
                     self.panel.playSpeed = ir['ReplayPlaySpeed']
                     self.panel.setSessionTime(ir['SessionTime'])
-                    irRC.updateCamDict()
+                    irRC.update_cam_dict()
 
-                    clientId = str(ir['DriverInfo']['DriverUserID'])
-                    rcServer.connect(clientId)
+                    client_id = str(ir['DriverInfo']['DriverUserID'])
+                    rcServer.connect(client_id)
 
             else:
-                if(state.checkSessionChange(ir)):
-                    self.panel.SetStatusText(state.getSessionName(), 1)
+                if(state.check_session_change(ir)):
+                    self.panel.SetStatusText(state.get_session_name(), 1)
 
             time.sleep(1)
 #            wx.CallAfter(self.panel.update)
@@ -129,10 +126,10 @@ class ConnectionCheck(Thread):
         print('Thread finished!')
         rcServer.disconnect()
 
-def iRSessionTimeToWxDateTime(sessionTime):
-    hours = int(sessionTime / 3600)
-    minutes = int((sessionTime - (hours * 3600)) / 60)
-    seconds = int(sessionTime - (hours * 3600) - (minutes * 60))
+def ir_session_time_to_wx_date_time(session_time):
+    hours = int(session_time / 3600)
+    minutes = int((session_time - (hours * 3600)) / 60)
+    seconds = int(session_time - (hours * 3600) - (minutes * 60))
     print(str(hours) + ':' + str(minutes) + ':' + str(seconds))
     return wx.DateTime.FromHMS(hours, minutes, seconds)
 
@@ -141,7 +138,7 @@ if __name__ == '__main__':
     state = State()
     app = wx.App(False)  # Create a new app, don't redirect stdout/stderr to a window.
     irRC = IrRemoteControl(ir)
-    frame = irRemoteControlRcFrame.irRemoteControlRcFrame(None, irRC) # A Frame is a top-level window.
+    frame = IrRemoteControlRcFrame.IrRemoteControlRcFrame(None, irRC) # A Frame is a top-level window.
     config = IrrcConfig()
     rcServer = RcServerConnector(frame, irRC, config)
     

@@ -26,35 +26,35 @@ from websocket import create_connection
 from websocket._exceptions import WebSocketConnectionClosedException
 
 class RcServerConnector:
-    rcServerUri = 'ws://192.168.178.154:8080/rcclient'
+    rc_server_uri = 'ws://192.168.178.154:8080/rcclient'
     frame = None
     irrc = None
 
-    def __init__(self, statusFrame, irrc, config):
-        self.frame = statusFrame
+    def __init__(self, status_frame, irrc, config):
+        self.frame = status_frame
         self.irrc = irrc
-        self.rcServerUri = config.getWsUrl()
+        self.rc_server_uri = config.get_ws_url()
         self.connected = False
 
-    def connect(self, clientId):
+    def connect(self, client_id):
         try:
-            self.ws = create_connection(self.rcServerUri)
+            self.ws = create_connection(self.rc_server_uri)
             self.receiver = ReceiveThread(self)
             self.receiver.start()
             
             self.ws.send("CONNECT\naccept-version:1.0,1.1,2.0\n\n\x00\n")
-            sub = stomper.subscribe("/user/rc/client-ack", clientId, ack='auto')
+            sub = stomper.subscribe("/user/rc/client-ack", client_id, ack='auto')
             self.ws.send(sub)
-            sub = stomper.subscribe("/rc/" + str(clientId) + "/replayposition" , clientId, ack='auto')
+            sub = stomper.subscribe("/rc/" + str(client_id) + "/replayposition", client_id, ack='auto')
             self.ws.send(sub)
 
-            send_message = stomper.send("/app/rcclient", str(clientId))
+            send_message = stomper.send("/app/rcclient", str(client_id))
             self.ws.send(send_message)
 
-            self.heartbeat = HeartbeatThread(self, clientId)
+            self.heartbeat = HeartbeatThread(self, client_id)
             self.heartbeat.start()
         except Exception as e:
-            self.frame.SetStatusText(self.rcServerUri + ': ' + str(e), 2)
+            self.frame.SetStatusText(self.rc_server_uri + ': ' + str(e), 2)
             #print(str(e))
 
     def disconnect(self):
@@ -77,21 +77,21 @@ class ReceiveThread(Thread):
                 if d:
                     m = MSG(d)
                     if m.type == 'CONNECTED':
-                        self.connector.frame.SetStatusText(self.connector.rcServerUri + " connected", 2)
+                        self.connector.frame.SetStatusText(self.connector.rc_server_uri + " connected", 2)
                         self.connector.connected = True
                     else:
                         print("stomp message: " + str(m.message))
                         try:
                             message = json.loads(str(m.message))
                             if message['messageType'] == 'replayTime':
-                                self.connector.irrc.setTimePosition(message['timestamp'], message['driverId'])
+                                self.connector.irrc.set_time_position(message['timestamp'], message['driverId'])
                                 self.connector.frame.setSessionTime(message['timestamp'] / 1000)
                         except json.decoder.JSONDecodeError as jserr:
                             print(str(jserr))
 
             except WebSocketConnectionClosedException:
                 try:
-                    self.connector.frame.SetStatusText(self.connector.rcServerUri + " disconnected", 2)
+                    self.connector.frame.SetStatusText(self.connector.rc_server_uri + " disconnected", 2)
                     self.connector.connected = False
                     self.sentinel = False
                 except RuntimeError as e:
@@ -102,12 +102,12 @@ class ReceiveThread(Thread):
         print("Receive thread terminated")
 
 class HeartbeatThread(Thread):
-    def __init__(self, connector, clientId):
+    def __init__(self, connector, client_id):
         """Init heartbeat Thread Class."""
         Thread.__init__(self)
         self.sentinel = True
         self.connector = connector
-        self.clientId = clientId
+        self.clientId = client_id
 
     def run(self):
         print("Receive thread started")
@@ -120,9 +120,9 @@ class HeartbeatThread(Thread):
                 self.sentinel = False
 
 class MSG(object):
-    def __init__(self, msg):
-        self.msg = msg
-        sp = self.msg.split("\n")
+    def __init__(self, message):
+        self.message = message
+        sp = self.message.split("\n")
         self.type = sp[0]
         self.destination = sp[1].split(":")[1]
         self.content = sp[2].split(":")[1]

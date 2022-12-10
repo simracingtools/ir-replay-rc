@@ -25,52 +25,59 @@ class IrRemoteControl:
     def __init__( self, ir ):
         self.ir = ir
 
-    def updatePlaySpeed(self, playSpeed, slow):
+    def update_play_speed(self, play_speed, slow):
         if self.ir.is_initialized and self.ir.is_connected:
-            self.ir.replay_set_play_speed(playSpeed, slow)
+            self.ir.replay_set_play_speed(play_speed, slow)
 
-    def updateShownFrame(self, frameDelta):
-        currentFrame = self.ir['ReplayFrameNum']
-        if self.ir.is_initialized and self.ir.is_connected and currentFrame > 0:
-            self.ir.replay_set_play_position(RpyPosMode.current, frameDelta)
+    def update_shown_frame(self, frame_delta):
+        current_frame = self.ir['ReplayFrameNum']
+        if self.ir.is_initialized and self.ir.is_connected and current_frame > 0:
+            self.ir.replay_set_play_position(RpyPosMode.current, frame_delta)
 
-    def toLivePosition(self):
+    def to_live_position(self):
         if self.ir.is_initialized and self.ir.is_connected:
             self.ir.replay_set_play_position(RpyPosMode.end, 0)
             self.ir.replay_set_play_speed(1, False)
 
 
-    def camSwitch(self, camName):
+    def cam_switch(self, cam_name):
         if self.ir.is_initialized and self.ir.is_connected:
-            camCarIdx = self.ir['CamCarIdx']
-            camCarNo = self.ir['DriverInfo']['Drivers'][camCarIdx]['CarNumberRaw']
-            if self.cams[camName]:
-                self.ir.cam_switch_num(camCarNo, self.cams[camName]['GroupNum'], 1)
+            cam_car_idx = self.ir['CamCarIdx']
+            cam_car_no = self.ir['DriverInfo']['Drivers'][cam_car_idx]['CarNumberRaw']
+            if self.cams[cam_name]:
+                self.ir.cam_switch_num(cam_car_no, self.cams[cam_name]['GroupNum'], 1)
                 #cam_switch_pos(self, position=0, group=1, camera=0)
             else:
                 print('Cam group not found')
 
-    def setTimePosition(self, sessionTime, teamId=-1):
+    def set_time_position(self, session_time, team_id=-1):
         if self.ir.is_initialized and self.ir.is_connected:
-            camCarNo = -1
-            print("set time on driver " + str(teamId) + " to " + str(sessionTime))
-            if teamId > 0:
+            cam_car_no = -1
+            print("set time on driver " + str(team_id) + " to " + str(session_time))
+            if team_id > 0:
                 for driver in self.ir['DriverInfo']['Drivers']:
-                    if driver['TeamID'] == teamId:
-                        camCarNo = driver['CarNumberRaw']
-                        print("found driver " + str(driver['UserID']) + ", carNo: " + str(camCarNo))
+                    if driver['TeamID'] == team_id:
+                        cam_car_no = driver['CarNumberRaw']
+                        print("found driver " + str(driver['UserID']) + ", carNo: " + str(cam_car_no))
                         break
+                if cam_car_no == -1:
+                    for driver in self.ir['DriverInfo']['Drivers']:
+                        if driver['UserID'] == team_id:
+                            cam_car_no = driver['CarNumberRaw']
+                            print("found driver " + str(driver['UserID']) + ", carNo: " + str(cam_car_no))
+                            break
 
-            camGroupNumber = self.ir['CamGroupNumber']
-            if not self.ir['CameraInfo']['Groups'][camGroupNumber]['GroupName'] in ['Chase', 'Far Chase', 'Rear Chase', 'Cockpit']:
-                camGroupNumber = self.cams['Chase']['GroupNum']
+            cam_group_number = self.ir['CamGroupNumber']
+            if self.ir['CameraInfo']['Groups'][cam_group_number]['GroupName'] not in \
+                    ['Chase', 'Far Chase', 'Rear Chase', 'Cockpit']:
+                cam_group_number = self.cams['Chase']['GroupNum']
 
-            self.ir.replay_search_session_time(self.ir['SessionNum'], sessionTime)
-            if camCarNo > -1:
-                self.ir.cam_switch_num(camCarNo, camGroupNumber, 1)
+            self.ir.replay_search_session_time(self.ir['SessionNum'], session_time)
+            if cam_car_no > -1:
+                self.ir.cam_switch_num(cam_car_no, cam_group_number, 1)
 
-    def updateCamDict(self):
+    def update_cam_dict(self):
         if self.ir.is_initialized and self.ir.is_connected:
-            for camGroup in self.ir['CameraInfo']['Groups']:
-                self.cams[camGroup['GroupName']] = camGroup
+            for cam_group in self.ir['CameraInfo']['Groups']:
+                self.cams[cam_group['GroupName']] = cam_group
 
